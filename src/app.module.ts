@@ -7,6 +7,7 @@ import { WishlistsModule } from './wishlists/wishlists.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { PostgresDbConfigService } from './database/config/postgres-db-config-service';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { PostgresDbConfigService } from './database/config/postgres-db-config-se
     OffersModule,
     WishesModule,
     WishlistsModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [],

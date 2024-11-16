@@ -1,43 +1,56 @@
 import {
   Controller,
   Get,
-  Post,
   Body,
-  Patch,
   Param,
-  Delete,
+  Post,
+  Patch,
+  UseInterceptors,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthUserId } from '../shared';
+import { FindUsersDto } from './dto/find-users.dto';
+import { PatchUserDto } from './dto/patch-user.dto';
+import { RemoveUserPasswordInterceptor } from './interceptors/users.interceptors';
+import { JwtGuard } from '../auth/passport-strategies/jwt/jwt-guard';
 
+@UseInterceptors(RemoveUserPasswordInterceptor)
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get('me')
-  findMe(@AuthUserId() id: number) {
+  findMe(@AuthUserId() id: string) {
     return this.usersService.findById(id);
   }
 
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+  @Patch('me')
+  patchMe(@AuthUserId() id: string, @Body() patchUserDto: PatchUserDto) {
+    return this.usersService.updateOne(id, patchUserDto);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
+  @Get('me/wishes')
+  getMyWishes(@AuthUserId() userId: string) {
+    return this.usersService.getWishes('user.id = :userId', { userId });
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
+  @Get(':username')
+  findOne(@Param('username') username: string) {
+    return this.usersService.findOne({ where: { username } });
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
+  @Get(':username/wishes')
+  @UseGuards(JwtGuard)
+  getUserWishes(@Param('username') username: string) {
+    return this.usersService.getWishes('user.username = :username', {
+      username,
+    });
+  }
+
+  @Post('find')
+  @UseGuards(JwtGuard)
+  findMany(@Body() { query }: FindUsersDto) {
+    return this.usersService.findByQuery(query);
   }
 }

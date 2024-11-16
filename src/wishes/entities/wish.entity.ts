@@ -50,5 +50,5 @@ export class Wish extends BaseEntityWithIdAndDates {
   copied: number;
 
   @ManyToMany(() => Wishlist, (wishlist) => wishlist.items)
-  lists: Wishlist[];
+  wishlists: Wishlist[];
 }
