@@ -15,6 +15,7 @@ import { PatchUserDto } from './dto/patch-user.dto';
 import { RemoveUserPasswordInterceptor } from './interceptors/users.interceptors';
 import { JwtGuard } from '../auth/passport-strategies/jwt/jwt-guard';
 
+@UseGuards(JwtGuard)
 @UseInterceptors(RemoveUserPasswordInterceptor)
 @Controller('users')
 export class UsersController {
@@ -41,7 +42,6 @@ export class UsersController {
   }
 
   @Get(':username/wishes')
-  @UseGuards(JwtGuard)
   getUserWishes(@Param('username') username: string) {
     return this.usersService.getWishes('user.username = :username', {
       username,
@@ -49,8 +49,7 @@ export class UsersController {
   }
 
   @Post('find')
-  @UseGuards(JwtGuard)
   findMany(@Body() { query }: FindUsersDto) {
-    return this.usersService.findByQuery(query);
+    return this.usersService.findMany(query);
   }
 }

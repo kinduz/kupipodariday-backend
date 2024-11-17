@@ -1,7 +1,7 @@
 import {
   ALLOWED_URL_PROTOCOLS,
   BaseEntityWithIdAndDates,
-  DECIMAL_TYPE_PARAMETRES,
+  DECIMAL_TYPE_PARAMS,
   MIN_LENGTH_ONE_SYMBOL,
 } from '../../shared';
 import { User } from '../../users/entities/user.entity';
@@ -28,10 +28,14 @@ export class Wish extends BaseEntityWithIdAndDates {
   @IsUrl({ protocols: ALLOWED_URL_PROTOCOLS })
   image: string;
 
-  @Column('decimal', DECIMAL_TYPE_PARAMETRES)
+  @Column('decimal', DECIMAL_TYPE_PARAMS)
   price: number;
 
-  @Column('decimal', DECIMAL_TYPE_PARAMETRES)
+  @Column('decimal', {
+    default: 0,
+    precision: DECIMAL_TYPE_PARAMS['precision'],
+    scale: DECIMAL_TYPE_PARAMS['scale'],
+  })
   raised: number;
 
   @ManyToOne(() => User, (user) => user.wishes, {

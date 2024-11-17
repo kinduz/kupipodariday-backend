@@ -34,7 +34,7 @@ export class Wishlist extends BaseEntityWithIdAndDates {
     nullable: false,
     onDelete: 'CASCADE',
   })
-  author: User;
+  owner: User;
 
   @ManyToMany(() => Wish, (wish) => wish.wishlists)
   @JoinTable()

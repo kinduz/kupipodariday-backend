@@ -7,10 +7,10 @@ import {
 import { PatchUserDto } from './dto/patch-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { FindOneOptions, ObjectLiteral, Repository } from 'typeorm';
+import { FindOneOptions, Like, ObjectLiteral, Repository } from 'typeorm';
 import { Cache } from 'cache-manager';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { hashValue } from '../shared';
+import { hashValue, ERRORS_MSG } from '../shared';
 import { SignUpDto } from '../auth/dto/sign-up.dto';
 
 const USER_EXIST_ERR_MSG =
@@ -45,33 +45,48 @@ export class UsersService {
     const cachedUser = await this.getFromCache(id);
 
     if (cachedUser) return cachedUser;
-    console.log(id);
+
     const user = await this.userRepository.findOne({ where: { id } });
+
     await this.addToCache(user);
 
     return user;
   }
 
-  findByQuery(query: string) {
-    return this.userRepository.find({
-      where: {
-        email: query,
-        username: query,
-      },
+  async findMany(query: string) {
+    const findOperator = Like(`%${query}`);
+
+    const searchResult = await this.userRepository.find({
+      where: [{ email: findOperator }, { username: findOperator }],
     });
+
+    if (!searchResult.length) {
+      throw new NotFoundException(ERRORS_MSG.USERS_NOT_FOUND);
+    }
+
+    return searchResult;
   }
 
-  findOne(userParams: FindOneOptions<User>) {
-    return this.userRepository.findOne(userParams);
+  async findOne(userParams: FindOneOptions<User>) {
+    const user = await this.userRepository.findOne(userParams);
+
+    if (!user) {
+      throw new NotFoundException(ERRORS_MSG.USER_NOT_FOUND);
+    }
+
+    return user;
   }
 
   async updateOne(id: string, patchUserDto: PatchUserDto) {
     if (patchUserDto.password) {
-      return (patchUserDto.password = await hashValue(patchUserDto.password));
+      patchUserDto.password = await hashValue(patchUserDto.password);
     }
 
     try {
-      const updateUser = await this.userRepository.save(patchUserDto);
+      const updateUser = await this.userRepository.save({
+        ...patchUserDto,
+        id,
+      });
       await this.removeFromCache(id);
       return updateUser;
     } catch (e) {

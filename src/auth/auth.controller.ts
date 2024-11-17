@@ -1,9 +1,10 @@
-import { Body, Controller, Post, Req } from '@nestjs/common';
+import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UsersService } from '../users/users.service';
 import { SignUpDto } from './dto/sign-up.dto';
 import { User } from '../users/entities/user.entity';
-import { SignInDto } from './dto/sign-in.dto';
+import { LocalGuard } from './passport-strategies/local/local-guard';
+import { Request } from 'express';
 
 @Controller('')
 export class AuthController {
@@ -12,9 +13,10 @@ export class AuthController {
     private readonly userService: UsersService,
   ) {}
 
+  @UseGuards(LocalGuard)
   @Post('signin')
-  async signIn(@Body() user: SignInDto) {
-    return this.authService.auth(user as User);
+  async signIn(@Req() req: Request) {
+    return this.authService.auth(req.user as User);
   }
 
   @Post('signup')

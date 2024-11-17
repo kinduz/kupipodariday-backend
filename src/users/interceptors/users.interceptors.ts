@@ -10,7 +10,7 @@ export class RemoveUserPasswordInterceptor {
   ): Observable<Omit<User, 'password' | 'email'>> {
     return next.handle().pipe(
       map((userData) => {
-        if ('password' in userData) {
+        if (userData && 'password' in userData) {
           const { password, ...user } = userData;
           return user;
         }

@@ -1,1 +1,2 @@
-export * from './shared.constants';
+export * from './entity.constants';
+export * from './messages.enum';

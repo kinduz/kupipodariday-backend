@@ -1,7 +1,4 @@
-import {
-  BaseEntityWithIdAndDates,
-  DECIMAL_TYPE_PARAMETRES,
-} from '../../shared';
+import { BaseEntityWithIdAndDates, DECIMAL_TYPE_PARAMS } from '../../shared';
 import { Column, Entity, ManyToOne } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 import { Wish } from '../../wishes/entities/wish.entity';
@@ -16,7 +13,7 @@ export class Offer extends BaseEntityWithIdAndDates {
   })
   item: Wish;
 
-  @Column('decimal', DECIMAL_TYPE_PARAMETRES)
+  @Column('decimal', DECIMAL_TYPE_PARAMS)
   amount: number;
 
   @Column({ default: false })

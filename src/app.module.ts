@@ -8,11 +8,15 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { PostgresDbConfigService } from './database/config/postgres-db-config-service';
 import { AuthModule } from './auth/auth.module';
+import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+    }),
+    CacheModule.register({
+      ttl: 5 * 60 * 1000,
     }),
     TypeOrmModule.forRootAsync({
       useClass: PostgresDbConfigService,
