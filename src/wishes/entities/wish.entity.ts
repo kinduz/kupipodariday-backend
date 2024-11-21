@@ -6,7 +6,7 @@ import {
 } from '../../shared';
 import { User } from '../../users/entities/user.entity';
 import { Column, Entity, ManyToMany, ManyToOne, OneToMany } from 'typeorm';
-import { IsUrl, Length } from 'class-validator';
+import { IsUrl, Length, Min } from 'class-validator';
 import { Offer } from '../../offers/entities/offer.entity';
 import { Wishlist } from '../../wishlists/entities/wishlist.entity';
 import {
@@ -28,9 +28,11 @@ export class Wish extends BaseEntityWithIdAndDates {
   @IsUrl({ protocols: ALLOWED_URL_PROTOCOLS })
   image: string;
 
+  @Min(0)
   @Column('decimal', DECIMAL_TYPE_PARAMS)
   price: number;
 
+  @Min(0)
   @Column('decimal', {
     default: 0,
     precision: DECIMAL_TYPE_PARAMS['precision'],
@@ -50,6 +52,7 @@ export class Wish extends BaseEntityWithIdAndDates {
   @OneToMany(() => Offer, (offer) => offer.item)
   offers: Offer[];
 
+  @Min(0)
   @Column('int', { default: 0 })
   copied: number;
 

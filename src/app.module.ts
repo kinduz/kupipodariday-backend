@@ -9,6 +9,7 @@ import { ConfigModule } from '@nestjs/config';
 import { PostgresDbConfigService } from './database/config/postgres-db-config-service';
 import { AuthModule } from './auth/auth.module';
 import { CacheModule } from '@nestjs/cache-manager';
+import { ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { CacheModule } from '@nestjs/cache-manager';
     CacheModule.register({
       ttl: 5 * 60 * 1000,
     }),
+    ThrottlerModule.forRoot([{ ttl: 60, limit: 10 }]),
     TypeOrmModule.forRootAsync({
       useClass: PostgresDbConfigService,
       inject: [PostgresDbConfigService],

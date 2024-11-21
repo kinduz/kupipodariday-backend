@@ -12,11 +12,9 @@ import { UsersService } from './users.service';
 import { AuthUserId } from '../shared';
 import { FindUsersDto } from './dto/find-users.dto';
 import { PatchUserDto } from './dto/patch-user.dto';
-import { RemoveUserPasswordInterceptor } from './interceptors/users.interceptors';
 import { JwtGuard } from '../auth/passport-strategies/jwt/jwt-guard';
 
 @UseGuards(JwtGuard)
-@UseInterceptors(RemoveUserPasswordInterceptor)
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}

@@ -73,7 +73,9 @@ export class WishlistsService {
     const isOwner = isOwnerInEntityCheck(userId, wishlist.owner.id);
     if (!isOwner) throw new ForbiddenException(ERRORS_MSG.FORBIDDEN_MSG);
 
-    return await this.wishlistsRepository.remove(wishlist);
+    await this.wishlistsRepository.remove(wishlist);
+
+    return;
   }
 
   private async convertWishedToDto(

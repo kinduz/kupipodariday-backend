@@ -16,7 +16,7 @@ import { JwtGuard } from '../auth/passport-strategies/jwt/jwt-guard';
 import { User } from '../users/entities/user.entity';
 
 @UseGuards(JwtGuard)
-@Controller('wishlists')
+@Controller('wishlistlists')
 export class WishlistsController {
   constructor(private readonly wishlistsService: WishlistsService) {}
 

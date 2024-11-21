@@ -7,7 +7,6 @@ export const AuthUserId = createParamDecorator(
     decoratorParam: never,
     ctx: ExecutionContext,
   ): BaseEntityWithIdAndDates['id'] => {
-    console.log(ctx.switchToHttp().getRequest().user);
     return ctx.switchToHttp().getRequest().user.id;
   },
 );

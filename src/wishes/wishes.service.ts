@@ -38,7 +38,7 @@ export class WishesService {
       order: {
         copied: 'DESC',
       },
-      take: 10,
+      take: 20,
     });
   }
 

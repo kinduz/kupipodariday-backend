@@ -10,4 +10,6 @@ export enum ERRORS_MSG {
   WISHLIST_NOT_FOUND = 'Список подарков не найден',
 
   FORBIDDEN_MSG = 'Вы не можете совершить данную операцию',
+
+  USER_EXIST_ERR_MSG = 'Пользователь с такими данными уже существует',
 }

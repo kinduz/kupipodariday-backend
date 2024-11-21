@@ -3,7 +3,7 @@ import {
   BaseEntityWithIdAndDates,
   MIN_LENGTH_ONE_SYMBOL,
 } from '../../shared';
-import { IsUrl, Length } from 'class-validator';
+import { IsOptional, IsUrl, Length } from 'class-validator';
 import { Column, ManyToMany, ManyToOne, JoinTable, Entity } from 'typeorm';
 import { Wish } from '../../wishes/entities/wish.entity';
 import { User } from '../../users/entities/user.entity';
@@ -20,10 +20,12 @@ export class Wishlist extends BaseEntityWithIdAndDates {
   })
   name: string;
 
+  @IsOptional()
   @Length(MIN_LENGTH_ONE_SYMBOL, MAX_WISHLIST_DESCRIPTION_LENGTH)
-  @Column({ length: MAX_WISHLIST_DESCRIPTION_LENGTH })
+  @Column({ length: MAX_WISHLIST_DESCRIPTION_LENGTH, nullable: true })
   description: string;
 
+  @IsOptional()
   @Column()
   @IsUrl({
     protocols: ALLOWED_URL_PROTOCOLS,
