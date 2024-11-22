@@ -1,6 +1,25 @@
-import { PartialType, PickType } from '@nestjs/swagger';
-import { User } from '../entities/user.entity';
+import { IsEmail, IsOptional, IsString, IsUrl, Length } from 'class-validator';
 
-export class PatchUserDto extends PartialType(
-  PickType(User, ['username', 'about', 'avatar', 'email', 'password'] as const),
-) {}
+export class PatchUserDto {
+  @IsOptional()
+  @IsString()
+  @Length(2, 30)
+  username: string;
+
+  @IsOptional()
+  @IsString()
+  @Length(2, 200)
+  about: string;
+
+  @IsOptional()
+  @IsUrl()
+  avatar: string;
+
+  @IsOptional()
+  @IsEmail()
+  email: string;
+
+  @IsOptional()
+  @IsString()
+  password: string;
+}

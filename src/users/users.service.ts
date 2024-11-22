@@ -64,12 +64,10 @@ export class UsersService {
     }
 
     try {
-      const user = await this.userRepository.save({
+      await this.userRepository.update(id, {
         ...patchUserDto,
-        id,
       });
-      const { password, ...userWithoutPassword } = user;
-      return userWithoutPassword;
+      return this.findOne({ where: { id } });
     } catch (err) {
       if ('code' in err) {
         if (err.code === '23505')
