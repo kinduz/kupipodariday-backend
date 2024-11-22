@@ -63,10 +63,19 @@ export class UsersService {
       patchUserDto.password = await hashValue(patchUserDto.password);
     }
 
-    return await this.userRepository.save({
-      ...patchUserDto,
-      id,
-    });
+    try {
+      const user = await this.userRepository.save({
+        ...patchUserDto,
+        id,
+      });
+      const { password, ...userWithoutPassword } = user;
+      return userWithoutPassword;
+    } catch (err) {
+      if ('code' in err) {
+        if (err.code === '23505')
+          throw new ConflictException(ERRORS_MSG.USER_EXIST_ERR_MSG);
+      }
+    }
   }
 
   async getWishes(searchCondition: string, userParams: ObjectLiteral) {

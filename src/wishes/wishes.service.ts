@@ -1,10 +1,16 @@
-import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  HttpException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateWishDto } from './dto/create-wish.dto';
 import { UpdateWishDto } from './dto/update-wish.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Wish } from './entities/wish.entity';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { User } from '../users/entities/user.entity';
+import { ERRORS_MSG } from '../shared';
 
 @Injectable()
 export class WishesService {
@@ -54,14 +60,30 @@ export class WishesService {
     return wish;
   }
 
-  async updateOne(id: string, updateWishDto: UpdateWishDto) {
-    const wish = await this.findOne({ where: { id } });
+  async updateOne(id: string, updateWishDto: UpdateWishDto, userId: string) {
+    const wish = await this.findOne({
+      where: { id },
+      relations: {
+        owner: true,
+      },
+    });
+
+    if (!this.isOwner(wish, userId))
+      throw new ForbiddenException(ERRORS_MSG.NOT_RULES);
 
     return await this.wishesRepository.save({ ...updateWishDto, id });
   }
 
-  async removeOne(id: string) {
-    const wish = await this.findOne({ where: { id } });
+  async removeOne(id: string, userId: string) {
+    const wish = await this.findOne({
+      where: { id },
+      relations: {
+        owner: true,
+      },
+    });
+
+    if (!this.isOwner(wish, userId))
+      throw new ForbiddenException(ERRORS_MSG.NOT_RULES);
 
     return await this.wishesRepository.remove(wish);
   }
@@ -78,6 +100,10 @@ export class WishesService {
     wish['owner'] = user;
 
     return await this.wishesRepository.save(wish);
+  }
+
+  private isOwner(wish: Wish, userId: string): boolean {
+    return !!wish.owner?.id && wish.owner.id === userId;
   }
 
   async donate(wish: Wish, amount: number) {
